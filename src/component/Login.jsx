@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Form, Input, Button, notification, message } from "antd";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { useDispatch } from "react-redux";
+import { verifyOtpAction } from "../redux/actions/common";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -28,8 +30,11 @@ const Login = () => {
       const response = await axios.post("http://localhost:3001/api/send-otp", {
         email,
       });
-
+      console.log("response", response);
       if (response.data.success) {
+        // Save data to local storage
+     
+
         setShowOtpInput(true);
         setCurrentStep(2);
         setTimeRemaining(60); // Reset time remaining when OTP is sent
@@ -53,43 +58,47 @@ const Login = () => {
       setLoadingOtp(false);
     }
   };
-
+const dispatch = useDispatch()
   const handleOtpSubmit = async () => {
-    try {
-      setLoadingSave(true);
-      const response = await axios.post(
-        "http://localhost:3001/api/verify-otp",
-        {
-          email,
-          otp,
-        }
-      );
+    dispatch(verifyOtpAction({email,otp}))
+    // try {
+    //   setLoadingSave(true);
+    //   const response = await axios.post(
+    //     "http://localhost:3001/api/verify-otp",
+    //     {
+    //       email,
+    //       otp,
+    //     }
+    //   );
 
-      if (response.data.success) {
-        notification.success({
-          message: "OTP Verified",
-          description: "You have successfully verified your email address.",
-        });
-        setShowOtpInput(false);
-        setCurrentStep(3);
-        // Navigate to the add-up-details screen
-        // navigate("AddUpDetails");
-        message.success("navigation start")
-      } else {
-        notification.error({
-          message: "Invalid OTP",
-          description: "Please enter a valid OTP.",
-        });
-      }
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
-      notification.error({
-        message: "Error",
-        description: "An error occurred while processing your request.",
-      });
-    } finally {
-      setLoadingSave(false);
-    }
+    //   if (response.data.success) {
+    //     notification.success({
+    //       message: "OTP Verified",
+    //       description: "You have successfully verified your email address.",
+    //     });
+    //     localStorage.setItem("user_id", response?.details?.user_id);
+    //     localStorage.setItem("email", response?.details?.email);
+    //     localStorage.setItem("token", response?.token);
+    //     setShowOtpInput(false);
+    //     setCurrentStep(3);
+    //     // Navigate to the add-up-details screen
+    //     // navigate("AddUpDetails");
+    //     message.success("navigation start");
+    //   } else {
+    //     notification.error({
+    //       message: "Invalid OTP",
+    //       description: "Please enter a valid OTP.",
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.error("Error verifying OTP:", error);
+    //   notification.error({
+    //     message: "Error",
+    //     description: "An error occurred while processing your request.",
+    //   });
+    // } finally {
+    //   setLoadingSave(false);
+    // }
   };
 
   const handleSendOtpAgain = () => {
