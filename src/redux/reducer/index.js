@@ -2,12 +2,15 @@ import { combineReducers } from "redux";
 
 import {
     verifyOtpReducer,
-  
+    getUserDetailsReducer,
+    updateUserDetailsReducer,
   } from "./common";
   
 
 const allReducers = combineReducers({
-    verifyOtpReducer
+    verifyOtpReducer,
+    getUserDetailsReducer,
+    updateUserDetailsReducer
 });
 
 const rootReducer = (state, action) => {
