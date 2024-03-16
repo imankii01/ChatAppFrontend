@@ -4,13 +4,19 @@ import {
     verifyOtpReducer,
     getUserDetailsReducer,
     updateUserDetailsReducer,
+    getMessagesReducer,
+    getUserListReducer,
+    sendMessageReducer,
   } from "./common";
   
 
 const allReducers = combineReducers({
     verifyOtpReducer,
     getUserDetailsReducer,
-    updateUserDetailsReducer
+    updateUserDetailsReducer,
+    getUserListReducer,
+    sendMessageReducer,
+    getMessagesReducer,
 });
 
 const rootReducer = (state, action) => {
