@@ -1,4 +1,5 @@
 import React from "react";
+import'./App.css'
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 
 import createSagaMiddleware from "redux-saga";

@@ -23,7 +23,7 @@ if (REACT_USER_ID) {
 export async function verifyOtpCall(data) {
   return await axios
     .post(`${API_BASE_URL}api/verify-otp`, data, {
-      headers:headers,
+      headers: headers,
     })
     .then((res) => {
       return {
@@ -35,7 +35,7 @@ export async function verifyOtpCall(data) {
 export async function getUserDetailsCall(data) {
   return await axios
     .get(`${API_BASE_URL}api/get-user/${data}`, data, {
-      headers:headers,
+      headers: headers,
     })
     .then((res) => {
       return {
@@ -47,7 +47,7 @@ export async function getUserDetailsCall(data) {
 export async function updatetUserDetailsCall(data) {
   return await axios
     .put(`${API_BASE_URL}api/update-user/${data?.user_id}`, data, {
-      headers:headers,
+      headers: headers,
     })
     .then((res) => {
       return {
@@ -58,8 +58,8 @@ export async function updatetUserDetailsCall(data) {
 }
 export async function getUserListCall(data) {
   return await axios
-    .get(`${API_BASE_URL}api/update-user/${data?.user_id}`, data, {
-      headers:headers,
+    .get(`${API_BASE_URL}api/get-user-list/${data?.user_id}`, data, {
+      headers: headers,
     })
     .then((res) => {
       return {
@@ -70,8 +70,8 @@ export async function getUserListCall(data) {
 }
 export async function sendMessageCall(data) {
   return await axios
-    .post(`${API_BASE_URL}api/send-messages/${data?.user_id}`, data, {
-      headers:headers,
+    .post(`${API_BASE_URL}api/send-messages`, data, {
+      headers: headers,
     })
     .then((res) => {
       return {
@@ -82,9 +82,13 @@ export async function sendMessageCall(data) {
 }
 export async function getMessageCall(data) {
   return await axios
-    .get(`${API_BASE_URL}api/get-messages/${data?.user_id}`, data, {
-      headers:headers,
-    })
+    .get(
+      `${API_BASE_URL}api/get-messages/${data?.sender_id}/${data?.receiver_id}`,
+      data,
+      {
+        headers: headers,
+      }
+    )
     .then((res) => {
       return {
         headers: res.headers,

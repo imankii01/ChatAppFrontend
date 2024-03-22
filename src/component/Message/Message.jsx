@@ -1,152 +1,383 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import '../../App.css';
-import { REACT_USER_ID } from '../../tokenProvider';
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { TailSpin } from "react-loader-spinner";
 
-const Message = () => {
-  const [users, setUsers] = useState([]);
-  const [user_id, setUser_id] = useState(REACT_USER_ID);
+import { Avatar, Button, Result } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import {
+  getMessagesAction,
+  getuserlistAction,
+  sendMessageAction,
+} from "../../redux/actions/common";
+import { REACT_USER_ID } from "../../tokenProvider";
+export let isMobileView = window.innerWidth <= 768;
+
+const ChatSystemModule = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [connectionData, setConnectionData] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [sendingMessage, setSendingMessage] = useState(null);
+  const [inComingMessage, setInComingMessage] = useState([]);
 
   useEffect(() => {
-    // Fetch user data when component mounts
-    getUsers();
-  }, []);
+    console.log(REACT_USER_ID);
+    dispatch(getuserlistAction({ user_id: REACT_USER_ID }));
+  }, [dispatch]);
 
-  // Function to fetch user data
-  const getUsers = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3001/api/get-user-list/${user_id}`);
-      setUsers(response.data.users);
-    } catch (error) {
-      console.error('Error fetching users:', error);
+  const getConnectionListReducer = useSelector(
+    (state) => state.getUserListReducer
+  );
+
+  useEffect(() => {
+    const { data, loading, error } = getConnectionListReducer;
+    setLoading(loading);
+
+    if (data && !loading && !error) {
+      setConnectionData(data?.users);
+      console.log(data?.users.length);
+      if (!isMobileView) {
+        console.log(data?.users);
+        setSelectedUser(data?.users[0]); // Select the first user by default
+      }
+    } else if (!loading && error) {
+      console.error("Error fetching connection list:", error);
+    }
+  }, [getConnectionListReducer, isMobileView]);
+
+  const getChatMessageReducer = useSelector(
+    (state) => state.getMessagesReducer
+  );
+
+  useEffect(() => {
+    const { loading, status, error, data } = getChatMessageReducer;
+    if (!loading && data && !error) {
+      setInComingMessage(data);
+    } else if (!loading && error !== undefined) {
+      console.warn("error in getChatMessageReducer API", error);
+      setInComingMessage([]);
+    } else {
+      console.warn(error);
+    }
+  }, [getChatMessageReducer]);
+
+  const handleSendMessage = () => {
+    if (sendingMessage.trim() !== "") {
+      const utcDateString = new Date().toISOString();
+      const data = {
+        message: sendingMessage,
+        sender_id: REACT_USER_ID,
+        receiver_id: selectedUser?.user_id,
+        time: utcDateString,
+      };
+
+      setInComingMessage([
+        ...inComingMessage,
+        {
+          message: sendingMessage,
+          sender_id: REACT_USER_ID,
+          receiver_id: selectedUser?.user_id,
+          created_at: utcDateString,
+        },
+      ]);
+      dispatch(sendMessageAction(data));
+      setSendingMessage("");
     }
   };
 
-  // Function to fetch messages for a specific user
-  const getMessages = async (userId) => {
-    try {
-      const response = await axios.get(`http://localhost:3001/api/messages/${userId}`);
-      setMessages(response.data.messages);
-    } catch (error) {
-      console.error('Error fetching messages:', error);
+  const messagesContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
     }
-  };
+  }, [inComingMessage]);
 
-  // Function to send a message
-  const sendMessage = async () => {
-    try {
-      const response = await axios.post(`http://localhost:3001/api/send-message`, {
-        userId: selectedUser.id,
-        message: newMessage,
-      });
-      setMessages([...messages, response.data.message]);
-      setNewMessage('');
-    } catch (error) {
-      console.error('Error sending message:', error);
+  useEffect(() => {
+    // to get the updated message form Client side as a Reciver
+    let intervalId;
+
+    if (selectedUser) {
+      const data = {
+        receiver_id: selectedUser.user_id,
+        sender_id: REACT_USER_ID,
+      };
+
+      dispatch(getMessagesAction(data));
+
+      intervalId = setInterval(() => {
+        dispatch(getMessagesAction(data));
+      }, 15000);
     }
-  };
 
-  // Function to handle message input change
-  const handleInputChange = (event) => {
-    setNewMessage(event.target.value);
-  };
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [selectedUser, dispatch]);
 
-  // Function to handle user selection
-  const handleUserSelection = (user) => {
-    setSelectedUser(user);
-    getMessages(user.id);
-  };
+  useEffect(() => {
+    console.log("selectedUser", selectedUser);
+    console.log("isMobileView", isMobileView);
+  }, [selectedUser]);
 
   return (
-    <div className="container">
-      <div className="page-title">
-        <div className="row gutters">
-          <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-            <h5 className="title">Chat App</h5>
-          </div>
-          <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12"> </div>
+    <>
+      {loading && (
+        <div className="loader">
+          <TailSpin ariaLabel="Loading..." color="#00BFFF" />
         </div>
-      </div>
-      <div className="content-wrapper">
-        <div className="row gutters">
-         {(users && users?.length > 0) ? (
-          <>
-          <div className="col-xl-4 col-lg-4 col-md-4 col-sm-3 col-3">
-            <div className="users-container">
-              <div className="chat-search-box">
-                <div className="input-group">
-                  <input className="form-control" placeholder="Search" />
-                  <div className="input-group-btn">
-                    <button type="button" className="btn btn-info">
-                      <i className="fa fa-search" />
-                    </button>
+      )}
+
+      <div className="ant-col internal-page-layout ant-col-xs-24 ant-col-xs-offset-0 ant-col-md-24 ant-col-md-offset-0 ">
+        <div className="ant-row container-children ">
+          {!loading && (
+            <div className="ant-col ant-col-xs-22 ant-col-xs-offset-1 ant-col-md-22 ant-col-md-offset-1 ant-col-xxl-16 ant-col-xxl-offset-1 ">
+              <div className={`queries  ${isMobileView ? "" : "ant-row "}`}>
+                <div className="ant-col ant-col-md-24 ">
+                  <div className={` ${isMobileView ? "" : "ant-row "}`}>
+                    {connectionData && connectionData.length > 0 ? (
+                      <>
+                        {isMobileView ? (
+                          <>
+                            {selectedUser ? (
+                              <ChatBox
+                                selectedUser={selectedUser}
+                                inComingMessage={inComingMessage}
+                                sendingMessage={sendingMessage}
+                                setSendingMessage={setSendingMessage}
+                                handleSendMessage={handleSendMessage}
+                                messagesContainerRef={messagesContainerRef}
+                                setSelectedUser={setSelectedUser}
+                              />
+                            ) : (
+                              <ConnectionList
+                                connectionData={connectionData}
+                                selectedUser={selectedUser}
+                                setSelectedUser={setSelectedUser}
+                              />
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <ConnectionList
+                              connectionData={connectionData}
+                              selectedUser={selectedUser}
+                              setSelectedUser={setSelectedUser}
+                            />
+
+                            {selectedUser && (
+                              <ChatBox
+                                selectedUser={selectedUser}
+                                inComingMessage={inComingMessage}
+                                sendingMessage={sendingMessage}
+                                setSendingMessage={setSendingMessage}
+                                handleSendMessage={handleSendMessage}
+                                messagesContainerRef={messagesContainerRef}
+                                setSelectedUser={setSelectedUser}
+                              />
+                            )}
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <Result
+                          title="You don't have any connections at the moment. Please check your request page."
+                          extra={
+                            <Button
+                              type="primary"
+                              onClick={() =>
+                                navigate(
+                                  "/dashboard/communications/connections"
+                                )
+                              }
+                            >
+                              Check Request
+                            </Button>
+                          }
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
-              <ul className="users">
-                {users.map((user) => (
-                  <li className="person" key={user.id} onClick={() => handleUserSelection(user)}>
-                    <div className="user">
-                      <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="User" />
-                      <span className={`status ${user.status}`} />
-                    </div>
-                    <p className="name-time">
-                      <span className="name">{user.name}</span>
-                      <span className="time">{user.time}</span>
-                    </p>
-                  </li>
-                ))}
-              </ul>
             </div>
-          </div>
-          <div className="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-9">
-            {selectedUser && (
-              <div className="selected-user">
-                <span>
-                  To: <span className="name">{selectedUser.name}</span>
-                </span>
-              </div>
-            )}
-            <div className="chat-container">
-              <ul className="chat-box chatContainerScroll">
-                {messages.map((message) => (
-                  <li key={message.id} className={`chat-${message.isSelf ? 'right' : 'left'}`}>
-                    {!message.isSelf && (
-                      <div className="chat-avatar">
-                        <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="User" />
-                        <div className="chat-name">{message.name}</div>
-                      </div>
-                    )}
-                    <div className="chat-text">{message.text}</div>
-                    <div className="chat-hour">
-                      {message.time} <span className="fa fa-check-circle" />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <div className="form-group mt-3 mb-0">
-                <textarea
-                  className="form-control"
-                  rows={3}
-                  placeholder="Type your message here..."
-                  value={newMessage}
-                  onChange={handleInputChange}
-                />
-                <button className="btn btn-primary mt-2" onClick={sendMessage}>Send</button>
-              </div>
-            </div>
-          </div>
-          </>
-         ):(
-          <h1>"NO data"</h1>
-         )}
+          )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default Message;
+export default ChatSystemModule;
+
+const ConnectionList = ({ connectionData, setSelectedUser, selectedUser }) => {
+  return (
+    <>
+      <div
+        id="el"
+        className={`ant-col ${isMobileView ? "" : "ant-col-6"} query-listing`}
+      >
+        {connectionData?.map((item, index) => (
+          <div className={` ${isMobileView ? "" : "ant-row "}`} key={index}>
+            <div
+              onClick={() => setSelectedUser(item)}
+              className={`ant-col query-list-item ${
+                selectedUser === item ? "active" : ""
+              } ant-col-md-24 `}
+            >
+              {" "}
+              <div className="ant-typography query-list-title-section ">
+                <span className="ant-typography query-user-name ">
+                  <Avatar
+                    size={64}
+                    icon={item?.profile_photo ? null : <UserOutlined />}
+                    src={item?.profile_photo ? `${item?.profile_photo}` : null}
+                  />
+                </span>
+                <span className="ant-typography query-user-name ">
+                  {item?.name}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+const ChatBox = ({
+  selectedUser,
+  inComingMessage,
+  sendingMessage,
+  setSendingMessage,
+  handleSendMessage,
+  messagesContainerRef,
+  setSelectedUser,
+}) => {
+  const onClose = () => {
+    setSelectedUser(null);
+  };
+
+  const renderMessages = () => {
+    let currentDate = null;
+    let messagesJSX = [];
+
+    inComingMessage.forEach((item, index) => {
+      const messageDate = new Date(item.created_at);
+      const messageDateString = messageDate.toDateString();
+      const timeString = messageDate.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+
+      const showDateSection = currentDate !== messageDateString;
+      currentDate = messageDateString;
+
+      messagesJSX.push(
+        <div
+          key={index}
+          className={`message-container ${showDateSection ? "show-date" : ""}`}
+        >
+          {showDateSection && (
+            <div className="message_date_section text-center">
+              {messageDateString}
+            </div>
+          )}
+          <div
+            className={`d-flex ${
+              item.sender_id === REACT_USER_ID ? "justify-content-end" : ""
+            }`}
+          >
+            <span
+              className={`${
+                item.sender_id === REACT_USER_ID
+                  ? "right_chat_message"
+                  : "left_chat_message"
+              } ${item.sender_id === REACT_USER_ID ? "ms-auto" : "me-4"}`}
+            >
+              <p>{item.message}</p>
+              <div className="message_time">{timeString}</div>
+            </span>
+          </div>
+        </div>
+      );
+    });
+
+    return messagesJSX;
+  };
+  return (
+    <>
+      <div
+        className={`ant-col ${
+          isMobileView ? "" : " ant-col-17 ant-col-offset-1 "
+        }`}
+      >
+        <div className="user_profile " style={{ border: "1px solid#f1f1f1" }}>
+          <div className="my-1 mx-2 pt-1 me-auto profile_name_status">
+            {isMobileView ? (
+              <span className="back_icon" onClick={onClose}>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAZ0lEQVR4nO2WMQqAQAwE5xMR/f9LrETRxit8jsdJbKwsNIK306UaWJYlIMR9GmABeoKlCdiBMUpqwOrSDWglfRLF+ypWTXsLs0uTjwW/F9sl6k7yCEyxo8J99PpMkeJTXhZuOC5RPRnBEDtxjsnsowAAAABJRU5ErkJggg==" />
+              </span>
+            ) : null}
+
+            <Avatar
+              size={64}
+              icon={selectedUser.profile_photo ? null : <UserOutlined />}
+              src={
+                selectedUser.profile_photo
+                  ? `${selectedUser?.profile_photo}`
+                  : null
+              }
+            />
+            <span style={{ marginLeft: "10px" }}>{selectedUser?.name}</span>
+          </div>
+        </div>
+        <div className="messages_area" ref={messagesContainerRef}>
+          {inComingMessage && inComingMessage.length > 0 ? (
+            renderMessages()
+          ) : (
+            <div className="message_date_section text-center">
+              {new Date().toDateString()}
+            </div>
+          )}
+        </div>
+        <div
+          className="chat-container mt-2"
+          style={{ border: "1px solid#f1f1f1" }}
+        >
+          <div className="chat-input">
+            <input
+              type="text"
+              placeholder="Type your message..."
+              value={sendingMessage}
+              onChange={(e) => setSendingMessage(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+            />
+            <button
+              className="send_btn_icon"
+              onClick={handleSendMessage}
+              disabled={sendingMessage}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="white"
+                class="bi bi-send-fill"
+                viewBox="0 0 16 16"
+              >
+                <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};

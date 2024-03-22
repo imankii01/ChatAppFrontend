@@ -8,7 +8,7 @@ import { getUserDetailsAction } from "./redux/actions/common";
 import Apply from "./component/Apply";
 import Home from "./component/Home";
 import PageNotFound from "./component/404Page/Index";
-import Message from "./component/Message/Message";
+import ChatSystemModule from "./component/Message/Message";
 
 export const Auth = ({ LoggedIn }) => {
   const [isRouteLoading, setIsRouteLoading] = useState(true);
@@ -58,7 +58,7 @@ export const PrivateRoutes = () => {
     {
       path: "message",
       sensitive: true,
-      element: <Message />,
+      element: <ChatSystemModule/>,
     },
     { path: "*", sensitive: true, element: <PageNotFound status={404} /> },
   ]);
