@@ -1,0 +1,18 @@
+.forget-body{
+	background-color: #E7E9F5;
+	font-family: 'Heebo', sans-serif;
+}
+.forget-card{
+	width: 500px;
+	border: none;
+	border-radius: 20px;
+}
+
+@media screen and (max-width: 450px){
+	.forget-card{
+		display: flex;
+		justify-content: center;
+		text-align: center;
+	}
+	
+}

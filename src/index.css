@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Tailwind CSS */
+
+/* Tailwind CSS */
+/* Tailwind CSS */
+.ant-steps.custom-stepper .ant-steps-item-process .ant-steps-item-icon {
+    background-color: #005c53 !important;
+    border-color: #005c53 !important;
+  }
+  .ant-steps.custom-stepper .ant-steps-item-finish>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-title::after {
+    background-color: #005c53;
+}
+/* Custom styles to prevent border color change on hover and focus */
+.ant-select-selector:hover, 
+.ant-select-selector:focus {
+  border-color: #005c53 !important;
+}
+.ant-input-outlined:hover{
+  border-color: #005c53;
+}
+.ant-input-outlined:focus{
+  border-color: #005c53;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus{
+  background-color:#005c53;
+}
+  
