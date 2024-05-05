@@ -128,7 +128,7 @@ export function* updatePasswordSaga(action) {
     });
   }
 }
-export function* getAllUserReducer(action) {
+export function* getAllUserSaga(action) {
   try {
     const response = yield call(getAllUserCall, action.data);
     yield put({

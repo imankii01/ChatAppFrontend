@@ -15,6 +15,8 @@ import {
   enquiryCall,
   getEnquiryCall,
   updateEnquiryCall,
+  sendMessageCall,
+  getMessageCall,
 } from "../../network";
 
 export function* uploadImgaeSaga(action) {
@@ -119,7 +121,7 @@ export function* updateEnquirySaga(action) {
 }
 export function* getMessageSaga(action) {
   try {
-    const response = yield call(updateEnquiryCall, action.data);
+    const response = yield call(getMessageCall, action.data);
     yield put({
       type: getMessageConstants.GET_MESSAGE_SUCCESS,
       data: response.data,
@@ -135,7 +137,7 @@ export function* getMessageSaga(action) {
 }
 export function* sendMessageSaga(action) {
   try {
-    const response = yield call(updateEnquiryCall, action.data);
+    const response = yield call(sendMessageCall, action.data);
     yield put({
       type: sendMessageConstants.SEND_MESSAGE_SUCCESS,
       data: response.data,

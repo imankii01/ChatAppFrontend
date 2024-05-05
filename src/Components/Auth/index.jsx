@@ -74,7 +74,11 @@ const Auth = () => {
       if (data?.user_type) {
         setUserType(data?.user_type);
         const targetLocation =
-          data?.status === "signup" ? "/registration" : "/dashboard/profile";
+          data?.status === "signup"
+            ? "/registration"
+            : userType === "guest"
+            ? "/waiting"
+            : "/dashboard/chat";
         navigate(targetLocation);
       }
     };

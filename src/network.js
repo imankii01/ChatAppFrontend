@@ -227,8 +227,8 @@ export async function sendMessageCall(data) {
 }
 export async function getMessageCall(data) {
   return await api
-    .put(
-      `${API_LOCAL_URL}message/get-message?sender_id=${data?.sender_id}&receiver_id=${data?.receiver_id}`,
+    .get(
+      `${API_LOCAL_URL}message/get-message?sender_id=${data?.sender_id}`,
       data
     )
     .then((res) => {

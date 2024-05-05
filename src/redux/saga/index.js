@@ -3,6 +3,7 @@ import {
   commonConstants,
   enquiryConstants,
   forgetPasswordLinkConstants,
+  getAllUserConstants,
   getEnquiryConstants,
   getMessageConstants,
   getuserDetailsConstants,
@@ -27,6 +28,7 @@ import {
 import {
   UpdateUserDetailsSaga,
   forgetPasswordLinkSaga,
+  getAllUserSaga,
   getUserDetailsSaga,
   loginUserSaga,
   singupUserSaga,
@@ -74,6 +76,7 @@ function* actionWatcher() {
   );
   yield takeLatest(getMessageConstants.GET_MESSAGE_REQUEST, getMessageSaga);
   yield takeLatest(sendMessageConstants.SEND_MESSAGE_REQUEST, sendMessageSaga);
+  yield takeLatest(getAllUserConstants.GET_USER_REQUEST, getAllUserSaga);
 }
 export default function* rootSaga() {
   yield all([actionWatcher()]);
