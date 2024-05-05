@@ -1,5 +1,6 @@
 import {
   forgetPasswordLinkConstants,
+  getAllUserConstants,
   getuserDetailsConstants,
   loginUserConstants,
   signupUserConstants,
@@ -162,6 +163,32 @@ export const updatePasswordReducer = (state = {}, action) => {
         error: action.error,
       };
     case updatePasswordConstants.UPDATE_PASSWORD_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+    default:
+      return state;
+  }
+};
+export const getAllUserReducer = (state = {}, action) => {
+  switch (action.type) {
+    case getAllUserConstants.GET_USER_REQUEST:
+      return {
+        ...state,
+        request: action.data,
+        loading: true,
+      };
+    case getAllUserConstants.GET_USER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        data: action.data,
+        status: action.status,
+        error: action.error,
+      };
+    case getAllUserConstants.GET_USER_FAILURE:
       return {
         ...state,
         loading: false,

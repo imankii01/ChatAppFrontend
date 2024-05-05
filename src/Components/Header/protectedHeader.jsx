@@ -14,26 +14,14 @@ const PublicNavigation = [
   {
     title: "Chat",
     icon: "briefcase16",
-    href: "/dashboard/jobs",
+    href: "/dashboard/chat",
     current: true,
   },
-  {
-    title: "User",
-    icon: "personMultiple16",
-    href: "/dashboard/candidates",
-    current: false,
-  },
-  {
-    title: "Client",
-    icon: "personMultiple16",
-    href: "/dashboard/client-dashboard",
-    current: false,
-  },
+ 
 ];
 
 const userNavigation = [
   { name: "Your Profile", href: "/dashboard/profile" },
-  { name: "Settings", href: "#" },
   { name: "Sign out", href: "#" },
 ];
 

@@ -1,26 +1,12 @@
 import {
-  addCandidateConstants,
-  addClientConstants,
-  applyJobConstants,
   commonConstants,
-  getAllCandidateActions,
-  getClientDetailsConstants,
-  getClientJobsConstants,
-  getClientListConstants,
-  getJobDetailConstants,
   logoutConstants,
   postFeedbackConstants,
-  resumeParserConstants,
-  updateClientDetailsConstants,
-  updateJobApplicationConstants,
-  updateJobConstants,
-  getCandidateProfileConstants,
-  createJobConstants,
-  getJobConstants,
-  getJobApplicationConstants,
   enquiryConstants,
   getEnquiryConstants,
   updateEnquiryConstants,
+  sendMessageConstants,
+  getMessageConstants,
 } from "../../constants";
 
 export function logoutUser(data) {
@@ -48,4 +34,10 @@ export function getEnquiryAction(data) {
 }
 export function updateEnquiryAction(data) {
   return { type: updateEnquiryConstants.UPDATE_ENQUIRY_REQUEST, data };
+}
+export function sendMessageAction(data) {
+  return { type: sendMessageConstants.SEND_MESSAGE_REQUEST, data };
+}
+export function getMessageAction(data) {
+  return { type: getMessageConstants.GET_MESSAGE_REQUEST, data };
 }

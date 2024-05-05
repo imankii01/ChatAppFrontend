@@ -183,10 +183,52 @@ export async function getEnquiryCall(data) {
       };
     });
 }
+export async function getAllUserCall(data) {
+  return await api
+    .get(`${API_LOCAL_URL}auth/get-all-user`, data)
+    .then((res) => {
+      return {
+        data: res.data,
+        status: res.status,
+        headers: res.headers,
+        message: res.message,
+      };
+    });
+}
 export async function updateEnquiryCall(data) {
   return await api
     .put(
       `${API_LOCAL_URL}public/enquiry-update?enquiry_id=${data?.enquiry_id}`,
+      data
+    )
+    .then((res) => {
+      return {
+        data: res.data,
+        status: res.status,
+        headers: res.headers,
+        message: res.message,
+      };
+    });
+}
+export async function sendMessageCall(data) {
+  return await api
+    .post(
+      `${API_LOCAL_URL}message/send-message`,
+      data
+    )
+    .then((res) => {
+      return {
+        data: res.data,
+        status: res.status,
+        headers: res.headers,
+        message: res.message,
+      };
+    });
+}
+export async function getMessageCall(data) {
+  return await api
+    .put(
+      `${API_LOCAL_URL}message/get-message?sender_id=${data?.sender_id}&receiver_id=${data?.receiver_id}`,
       data
     )
     .then((res) => {

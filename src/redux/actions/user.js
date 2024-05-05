@@ -1,5 +1,6 @@
 import {
   forgetPasswordLinkConstants,
+  getAllUserConstants,
   getuserDetailsConstants,
   loginUserConstants,
   signupUserConstants,
@@ -30,4 +31,7 @@ export function forgetPasswordLinkAction(data) {
 }
 export function updatePasswordAction(data) {
   return { type: updatePasswordConstants.UPDATE_PASSWORD_REQUEST, data };
+}
+export function getAllUser(data) {
+  return { type: getAllUserConstants.GET_USER_REQUEST, data };
 }

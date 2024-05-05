@@ -5,6 +5,8 @@ import {
   enquiryConstants,
   getEnquiryConstants,
   updateEnquiryConstants,
+  getMessageConstants,
+  sendMessageConstants,
 } from "../../constants";
 import {
   postFeedbackCall,
@@ -111,6 +113,38 @@ export function* updateEnquirySaga(action) {
   } catch (e) {
     yield put({
       type: updateEnquiryConstants.UPDATE_ENQUIRY_FAILURE,
+      error: e.message,
+    });
+  }
+}
+export function* getMessageSaga(action) {
+  try {
+    const response = yield call(updateEnquiryCall, action.data);
+    yield put({
+      type: getMessageConstants.GET_MESSAGE_SUCCESS,
+      data: response.data,
+      status: response.status,
+      error: response.error,
+    });
+  } catch (e) {
+    yield put({
+      type: getMessageConstants.GET_MESSAGE_FAILURE,
+      error: e.message,
+    });
+  }
+}
+export function* sendMessageSaga(action) {
+  try {
+    const response = yield call(updateEnquiryCall, action.data);
+    yield put({
+      type: sendMessageConstants.SEND_MESSAGE_SUCCESS,
+      data: response.data,
+      status: response.status,
+      error: response.error,
+    });
+  } catch (e) {
+    yield put({
+      type: sendMessageConstants.SEND_MESSAGE_FAILURE,
       error: e.message,
     });
   }

@@ -6,6 +6,8 @@ import {
   enquiryReducer,
   getEnquiryReducer,
   updateEnquiryReducer,
+  getMessageReducer,
+  sendMessageReducer,
 } from "./common.js";
 import {
   loginUserReducer,
@@ -14,6 +16,7 @@ import {
   updateUserDetailReducer,
   forgetPasswordLinkReducer,
   updatePasswordReducer,
+  getAllUserReducer,
 } from "./user.js";
 const allReducers = combineReducers({
   uploadImageReducer,
@@ -28,6 +31,9 @@ const allReducers = combineReducers({
   enquiryReducer,
   getEnquiryReducer,
   updateEnquiryReducer,
+  getAllUserReducer,
+  sendMessageReducer,
+  getMessageReducer,
 });
 
 const rootReducer = (state, action) => {

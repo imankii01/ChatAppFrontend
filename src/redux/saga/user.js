@@ -1,14 +1,17 @@
 import { call, put } from "redux-saga/effects";
 import {
   forgetPasswordLinkConstants,
+  getAllUserConstants,
   getuserDetailsConstants,
   loginUserConstants,
   signupUserConstants,
+  updateEnquiryConstants,
   updatePasswordConstants,
   updateUserDetailsConstants,
 } from "../../constants";
 import {
   forgetPasswordLinkCall,
+  getAllUserCall,
   getUserDetailCall,
   loginUserCall,
   singupUserCall,
@@ -97,14 +100,14 @@ export function* forgetPasswordLinkSaga(action) {
   try {
     const response = yield call(forgetPasswordLinkCall, action.data);
     yield put({
-      type: forgetPasswordLinkConstants.FORGET_PASSWORD_LINK_REQUEST,
+      type: forgetPasswordLinkConstants.FORGET_PASSWORD_LINK_SUCCESS,
       data: response.data,
       status: response.status,
       error: response.error,
     });
   } catch (e) {
     yield put({
-      type: forgetPasswordLinkConstants.FORGET_PASSWORD_LINK_SUCCESS,
+      type: forgetPasswordLinkConstants.FORGET_PASSWORD_LINK_FAILURE,
       error: e.message,
     });
   }
@@ -113,14 +116,30 @@ export function* updatePasswordSaga(action) {
   try {
     const response = yield call(updatePasswordCall, action.data);
     yield put({
-      type: updatePasswordConstants.UPDATE_PASSWORD_REQUEST,
+      type: updatePasswordConstants.UPDATE_PASSWORD_SUCCESS,
       data: response.data,
       status: response.status,
       error: response.error,
     });
   } catch (e) {
     yield put({
-      type: updatePasswordConstants.UPDATE_PASSWORD_SUCCESS,
+      type: updatePasswordConstants.UPDATE_PASSWORD_FAILURE,
+      error: e.message,
+    });
+  }
+}
+export function* getAllUserReducer(action) {
+  try {
+    const response = yield call(getAllUserCall, action.data);
+    yield put({
+      type: getAllUserConstants.GET_USER_SUCCESS,
+      data: response.data,
+      status: response.status,
+      error: response.error,
+    });
+  } catch (e) {
+    yield put({
+      type: getAllUserConstants.GET_USER_FAILURE,
       error: e.message,
     });
   }

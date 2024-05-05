@@ -8,6 +8,7 @@ import Profile from "./Components/Profile";
 import VerificationErrorPage from "./Utils/VerificationPage";
 import ForgetPassword from "./Components/PublicPage/ForgetPassword";
 import HomePage from "./Components/Home/HomePage";
+import ChatSystemModule from "./Components/Dashboard/Chat/message";
 
 export const PublicRoutes = () => {
   return useRoutes([
@@ -40,7 +41,10 @@ export const PrivateRoutes = () => {
       path: "dashboard",
       sensitive: true,
       element: <MainDashboard />,
-      children: [{ path: "profile", element: <Profile /> }],
+      children: [
+        { path: "profile", element: <Profile /> },
+        { path: "chat", element: <ChatSystemModule /> },
+      ],
     },
   ]);
 };

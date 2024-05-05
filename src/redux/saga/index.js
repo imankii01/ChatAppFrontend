@@ -1,33 +1,36 @@
-import { takeLatest, all } from "redux-saga/effects";
+import { all, takeLatest } from "redux-saga/effects";
 import {
   commonConstants,
   enquiryConstants,
   forgetPasswordLinkConstants,
   getEnquiryConstants,
+  getMessageConstants,
   getuserDetailsConstants,
   loginUserConstants,
   postFeedbackConstants,
+  sendMessageConstants,
   signupUserConstants,
   updateEnquiryConstants,
   updatePasswordConstants,
   updateUserDetailsConstants,
 } from "../../constants";
 import {
-  postFeedbackSaga,
-  resumeParserSaga,
-  uploadImgaeFileSaga,
-  uploadImgaeSaga,
   enquirySaga,
   getEnquirySaga,
+  getMessageSaga,
+  postFeedbackSaga,
+  sendMessageSaga,
   updateEnquirySaga,
+  uploadImgaeFileSaga,
+  uploadImgaeSaga,
 } from "./common";
 import {
   UpdateUserDetailsSaga,
   forgetPasswordLinkSaga,
+  getUserDetailsSaga,
   loginUserSaga,
   singupUserSaga,
   updatePasswordSaga,
-  getUserDetailsSaga,
 } from "./user";
 
 function* actionWatcher() {
@@ -61,7 +64,16 @@ function* actionWatcher() {
   );
   yield takeLatest(enquiryConstants.ENQUIRY_REQUEST, enquirySaga);
   yield takeLatest(getEnquiryConstants.GET_ENQUIRY_REQUEST, getEnquirySaga);
-  yield takeLatest(updateEnquiryConstants.UPDATE_ENQUIRY_REQUEST, updateEnquirySaga);
+  yield takeLatest(
+    updateEnquiryConstants.UPDATE_ENQUIRY_REQUEST,
+    updateEnquirySaga
+  );
+  yield takeLatest(
+    updateEnquiryConstants.UPDATE_ENQUIRY_REQUEST,
+    updateEnquirySaga
+  );
+  yield takeLatest(getMessageConstants.GET_MESSAGE_REQUEST, getMessageSaga);
+  yield takeLatest(sendMessageConstants.SEND_MESSAGE_REQUEST, sendMessageSaga);
 }
 export default function* rootSaga() {
   yield all([actionWatcher()]);

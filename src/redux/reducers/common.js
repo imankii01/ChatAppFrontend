@@ -1,25 +1,11 @@
 import {
-  addCandidateConstants,
-  addClientConstants,
-  applyJobConstants,
   commonConstants,
-  getAllCandidateActions,
-  getClientDetailsConstants,
-  getClientJobsConstants,
-  getClientListConstants,
-  getJobDetailConstants,
   postFeedbackConstants,
-  resumeParserConstants,
-  updateClientDetailsConstants,
-  updateJobApplicationConstants,
-  updateJobConstants,
-  getCandidateProfileConstants,
-  createJobConstants,
-  getJobConstants,
-  getJobApplicationConstants,
   enquiryConstants,
   getEnquiryConstants,
   updateEnquiryConstants,
+  sendMessageConstants,
+  getMessageConstants,
 } from "../../constants";
 
 export const uploadImageReducer = (state = {}, action) => {
@@ -175,6 +161,58 @@ export const updateEnquiryReducer = (state = {}, action) => {
         error: action.error,
       };
     case updateEnquiryConstants.UPDATE_ENQUIRY_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+    default:
+      return state;
+  }
+};
+export const sendMessageReducer = (state = {}, action) => {
+  switch (action.type) {
+    case sendMessageConstants.SEND_MESSAGE_REQUEST:
+      return {
+        ...state,
+        request: action.data,
+        loading: true,
+      };
+    case sendMessageConstants.SEND_MESSAGE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        data: action.data,
+        status: action.status,
+        error: action.error,
+      };
+    case sendMessageConstants.SEND_MESSAGE_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+    default:
+      return state;
+  }
+};
+export const getMessageReducer = (state = {}, action) => {
+  switch (action.type) {
+    case getMessageConstants.GET_MESSAGE_REQUEST:
+      return {
+        ...state,
+        request: action.data,
+        loading: true,
+      };
+    case getMessageConstants.GET_MESSAGE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        data: action.data,
+        status: action.status,
+        error: action.error,
+      };
+    case getMessageConstants.GET_MESSAGE_FAILURE:
       return {
         ...state,
         loading: false,
